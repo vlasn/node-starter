@@ -1,12 +1,11 @@
-###Serveri setup
----
-Alustuseks, installi omale VirtualBox ja sinna sisse vaikeseadetega Ubuntu Server 16.04
+# Serveri setup
 
+Alustuseks, installi omale VirtualBox ja sinna sisse vaikeseadetega Ubuntu Server 16.04.
 Kui installatsioon lõppenud, sule virtuaalmasin. Lisa jagatud kaust - esmalt virtualBoxi pool - settings, shared folders, add. Read-only ja auto mount. 
 Tee oma kausta uus kaust nimega www, sinna sisse app, appi sisse public ja publicu sisse index.html.
 Minu oma asetseb desktopil ja on nimega "mets" - näited on selle peale samamoodi üles ehitatud.
 Forwardi pordid 3022->22 ja 3080->80
----
+
 1) Käivita virtuaalmasin uuesti.
 
 2) `sudo apt-get update && sudo apt-get install openssh-server`
