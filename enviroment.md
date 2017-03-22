@@ -12,7 +12,7 @@ Vali (macil) virtualboxi Devices menüüst "Mount guest additions CD image". Ubu
 
 `mount /dev/cdrom /media/cdrom`.
 
-Navigeeri ja installi image:
+Navigeeri ja installi selle image pealt fail:
 
 `cd /media/cdrom && sudo sh ./VBoxLinuxAdditions.run`
 
