@@ -1,87 +1,67 @@
-## Serveri setup
+###Serveri setup
 ---
 Alustuseks, installi omale VirtualBox ja sinna sisse vaikeseadetega Ubuntu Server 16.04
 
-Pane VM tööle ja jooksuta järgmised käsud: 
+Kui installatsioon lõppenud, sule virtuaalmasin. Lisa jagatud kaust - esmalt virtualBoxi pool - settings, shared folders, add. Read-only ja auto mount. 
+Tee oma kausta uus kaust nimega www, sinna sisse app, appi sisse public ja publicu sisse index.html.
+Minu oma asetseb desktopil ja on nimega "mets" - näited on selle peale samamoodi üles ehitatud.
+Forwardi pordid 3022->22 ja 3080->80
+---
+1) Käivita virtuaalmasin uuesti.
 
-`sudo apt-get update`
+2) `sudo apt-get update && sudo apt-get install openssh-server`
 
-`sudo apt-get install build-essential nodejs npm git nginx openssh-server`.
+3) **!!!Veendu, et virtualbox guest additions on mounted!!!** Host-masinast, käsurealt (windowsis Putty kaudu):
 
-Vali (macil) virtualboxi Devices menüüst "Mount guest additions CD image". Ubuntus:
+`ssh -p 3022 mets@localhost`
 
-`mount /dev/cdrom /media/cdrom`.
+4) logi oma parooliga (siin näitel "mets") sisse ja jooksuta korraga järgmine käsk:
+```
+sudo apt-get update && sudo apt-get install nodejs npm &&
+sudo npm cache clean -f && sudo npm install -g n && sudo n stable &&
+sudo apt-get install git nginx && sudo mount /dev/cdrom /media/cdrom &&
+sudo sh /media/cdrom/VBoxLinuxAdditions.run &&
+sudo usermod -a -G vboxsf www-data && sudo usermod -a -G vboxsf mets &&
+sudo reboot
+```
 
-Navigeeri ja installi selle image pealt fail:
+Vahepeal küsitakse Sult su parooli ja palutakse "Y" vajutada.
 
-`cd /media/cdrom && sudo sh ./VBoxLinuxAdditions.run`
+5) Kui masin uuesti üles buudib, ssh uuesti sisse ja
+```
+sudo rm -rf /var/www &&
+sudo ln -s /media/sf_mets/www /var &&
+sudo mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default-backup &&
+sudo nano /etc/nginx/sites-available/default
+```
 
-Sule virtuaalmasin. Lisa jagatud kaust - esmalt virtualBoxi pool - settings, shared folders, add. Vali auto-mount. Tee oma causa uus kaust nimega www.
-Minu oma asetseb desktopil ja on nimega "mets".
-Forwardi pordid 22 -> 3022 ja 80 -> 3080
+6) Copy-paste avanenud tekstiredaktoriaknasse:
 
+```
+server {
+    listen 80;
 
+    root /var/www/app/public;
 
-Käivita virtuaalmasin. Peaksid nüüd saama masinasse SSH-da järgmiselt:
+    server_name localhost;
+    index index.html index.html;
 
-ssh -p 3022 sinuVMikasutajanimi@localhost. Kui sisse loginud/ssh-nud oled, jooksuta järgmised käsud et süsteemil vboxi jagatud kaustale ligipääs oleks:
+    location / {
+        try_files $uri $uri/ =404;
+        autoindex off;
+        sendfile off;
+    }
 
-`cd /media`
+    location /api {
+        proxy_pass http://localhost:3000;
+    }
+}
+```
 
-`Sudo usermod -a -G vboxsf SINUKASUTAJANIMI`
+7) Peale seda ctrl+o, enter, ctrl+x ja
 
-Relogi: 
-
-`su - $USER`
-
-
-Eemaldame default kausta: 
-
-`sudo rm -rf /var/www`
-
-..ja loome lingi: 
-
-`sudo ln -s /media/sf_mets/www /var`
-
-Lisame www-data kasutaja vboxsf gruppi et server kaustale ligi saaks.
-
-
-`usermod -a -G vboxsf www-data`
-
-Failisysteem on nyyd korras! …vist!
-
-Serveri konf:
-
-`sudo nano /etc/nginx/sites-available/default`
-
-
-    server {
-        listen 80;
-    
-        root /var/www/app/public;
-    
-        server_name localhost;
-        index index.html index.html;
-    
-        location / {
-            try_files $uri $uri/ =404;
-            autoindex off;
-            sendfile off;
-        }
-    
-        location /api {
-            proxy_pass http://localhost:3000;
-        }
-    } 
-
-ctrl+o salvestamiseks, ctrl+x sulgemiseks.
-
-Kiire serveri restart:
-
-    `sudo service nginx restart`
-
-Mine nüüd tagasi host-arvutisse ja loo sinukaust/www/app/public kausta index.html.
+`sudo service nginx restart`
 
 Siis navigeeri browseris http://localhost:3080
 
-Kas said tööle? Kui ei, vaata sammud veel korra üle ja konsulteeri Veljoga.
+MongoDB-d puudutav osa ei ole veel lisatud aga lisandub lähiajal.
