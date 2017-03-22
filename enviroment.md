@@ -6,14 +6,25 @@ Pane VM tööle ja jooksuta järgmised käsud:
 
 `sudo apt-get update`
 
-`sudo apt-get install build-essential nodejs npm git nginx`
+`sudo apt-get install build-essential nodejs npm git nginx openssh-server`.
 
-Sule virtuaalmasin. Lisa jagatud kaust - esmalt virtualBoxi pool - settings, shared folders, add. Read-only ja auto mount. Tee oma causa uus kaust nimega www.
+Vali (macil) virtualboxi Devices menüüst "Mount guest additions CD image". Ubuntus:
+
+`mount /dev/cdrom /media/cdrom`.
+
+Navigeeri ja installi image:
+
+`cd /media/cdrom && sudo sh ./VBoxLinuxAdditions.run`
+
+Sule virtuaalmasin. Lisa jagatud kaust - esmalt virtualBoxi pool - settings, shared folders, add. Vali auto-mount. Tee oma causa uus kaust nimega www.
 Minu oma asetseb desktopil ja on nimega "mets".
 Forwardi pordid 22 -> 3022 ja 80 -> 3080
 
 
-Käivita virtuaalmasin ja navigeeri + lisa oma kasutaja lubatud gruppi:
+
+Käivita virtuaalmasin. Peaksid nüüd saama masinasse SSH-da järgmiselt:
+
+ssh -p 3022 sinuVMikasutajanimi@localhost. Kui sisse loginud/ssh-nud oled, jooksuta järgmised käsud et süsteemil vboxi jagatud kaustale ligipääs oleks:
 
 `cd /media`
 
@@ -32,7 +43,7 @@ Eemaldame default kausta:
 
 `sudo ln -s /media/sf_mets/www /var`
 
-Lisame www-data kasutaja vboxsf gruppi et server kaustale ligi sacks.
+Lisame www-data kasutaja vboxsf gruppi et server kaustale ligi saaks.
 
 
 `usermod -a -G vboxsf www-data`
