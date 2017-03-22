@@ -1,5 +1,5 @@
-###Serveri setup
-
+## Serveri setup
+---
 Alustuseks, installi omale VirtualBox ja sinna sisse vaikeseadetega Ubuntu Server 16.04
 
 Pane VM tööle ja jooksuta järgmised käsud: 
