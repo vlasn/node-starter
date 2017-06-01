@@ -37,6 +37,7 @@ sudo nano /etc/nginx/sites-available/default
 6) Copy-paste avanenud tekstiredaktoriaknasse:
 
 ```
+
 server {
     listen 80;
 
@@ -45,12 +46,28 @@ server {
     server_name localhost;
     index index.html index.html;
 
-    location / {
-        try_files $uri $uri/ =404;
-        autoindex off;
-        sendfile off;
+    location ~* \.(?:manifest|appcache|html?|xml|json)$ {
+         expires -1;
+         # access_log logs/static.log; # remove the # from the start of the line to enable static logging
+    }
+    location ~* \.(?:css|js)$ {
+      try_files $uri =404;
+      expires 1y;
+      access_log off;
+      add_header Cache-Control "public";
     }
 
+    # Any route containing a file extension
+    location ~ ^.+\..+$ {
+      try_files $uri =404;
+    }
+
+    # Any route that doesn't have a file extension
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API url-s
     location /api {
         proxy_pass http://localhost:3000;
     }
